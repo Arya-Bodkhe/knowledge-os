@@ -1,22 +1,16 @@
 from fastapi import FastAPI
-from pydantic import BaseModel
+from backend.app.routes.chat import router as chat_router
 
 app = FastAPI()
 
-class ChatRequest(BaseModel):
-    question: str
+app.include_router(chat_router)
+
 
 @app.get("/")
 def home():
     return {"message": "Welcome to KnowledgeOS!"}
 
+
 @app.get("/health")
 def health_check():
     return {"status": "healthy"}
-
-@app.post("/chat")
-def chat(request: ChatRequest):
-    return {
-        "question": request.question,
-        "answer": "KnowledgeOS will answer this using your documents."
-    }
