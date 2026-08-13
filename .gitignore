@@ -7,3 +7,5 @@ __pycache__/
 
 # Environment Variables
 .env
+
+chroma_db/
