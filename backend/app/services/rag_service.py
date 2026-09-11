@@ -1,16 +1,16 @@
-from backend.app.services.embedding_service import generate_embeddings
-from backend.app.services.vector_store import search_documents
+from backend.app.services.retrieval_service import retrieve_documents
 from backend.app.services.gemini_service import generate_answer
 
 
 def answer_question(question: str, n_results: int = 3) -> str:
-    # Convert the user's question into an embedding
-    query_embedding = generate_embeddings([question])[0]
-
     # Retrieve the most relevant document chunks
-    results = search_documents(query_embedding, n_results)
+    results = retrieve_documents(question, n_results)
 
-    documents = results.get("documents", [[]])[0]
+    # Extract document text from retrieval results
+    documents = [
+        result["document"]
+        for result in results
+    ]
 
     # Handle the case where no relevant documents are available
     if not documents:

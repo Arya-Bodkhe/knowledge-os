@@ -5,6 +5,8 @@ from fastapi import APIRouter, UploadFile, File
 
 from backend.app.services.pdf_service import extract_text
 from backend.app.services.chunk_service import chunk_text
+from backend.app.services.embedding_service import generate_embeddings
+from backend.app.services.vector_store import add_documents
 
 router = APIRouter()
 
@@ -23,12 +25,15 @@ async def upload_document(file: UploadFile = File(...)):
     try:
         text = extract_text(temp_path)
         chunks = chunk_text(text)
+        embeddings = generate_embeddings(chunks)
+        add_documents(chunks, embeddings, file.filename)
 
         return {
             "filename": file.filename,
             "characters_extracted": len(text),
             "chunks_created": len(chunks),
-            "message": "Document processed successfully."
+            "message": "Document processed successfully.",
+            "embeddings_created":len(embeddings)
         }
 
     finally:
